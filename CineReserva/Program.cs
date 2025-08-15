@@ -1,8 +1,6 @@
 using CineReserva.Data;
 using Microsoft.EntityFrameworkCore;
 
-
-
 namespace CineReserva
 {
     public class Program
@@ -11,15 +9,15 @@ namespace CineReserva
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Servicios
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Pipeline
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -27,24 +25,27 @@ namespace CineReserva
             }
 
             app.UseHttpsRedirection();
-            app.UseRouting();
 
+            // *** IMPORTANTE: servir /wwwroot (css, js, imágenes) ***
+            app.UseStaticFiles();
+
+            app.UseRouting();
             app.UseAuthorization();
 
-
+            // *** Cambiamos la ruta por defecto a Shows/Index ***
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Shows}/{action=Index}/{id?}");
 
-
+            // APIs con attribute routing (BookingsController, etc.)
             app.MapControllers();
 
+            // Semilla de datos
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 DbSeeder.SeedAsync(db).GetAwaiter().GetResult();
             }
-
 
             app.Run();
         }

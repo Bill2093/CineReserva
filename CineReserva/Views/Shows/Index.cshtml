@@ -1,0 +1,23 @@
+﻿@model IEnumerable<CineReserva.Models.Show>
+@{
+    ViewData["Title"] = "Funciones";
+}
+
+<h2>Funciones</h2>
+<table class="table">
+    <thead>
+        <tr><th>Pelicula</th><th>Sala</th><th>Inicio</th><th>Precio</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Movie.Title</td>
+                <td>@s.Auditorium.Name</td>
+                <td>@s.StartTime.ToString("g")</td>
+                <td>@s.Price</td>
+                <td><a class="btn btn-primary" href="/Shows/Seats/@s.Id">Elegir asientos</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
